@@ -4,9 +4,7 @@ use aoc_runner_derive::{aoc, aoc_generator};
 pub fn input_gen_part1(input: &str) -> Vec<i64> {
     input
         .lines()
-        .map(|l| {
-            i64::from_str_radix(l, 10).unwrap()
-        })
+        .map(|l| i64::from_str_radix(l, 10).unwrap())
         .collect()
 }
 
