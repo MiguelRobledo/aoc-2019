@@ -15,28 +15,21 @@ pub fn solve_part1(input: &[u64]) -> u64 {
     let mut pc = 0;
     
     loop {
-        let n = *mem.get(pc).unwrap();
-        if n == 99 {
-            break;
-        }
+        let x = mem[mem[pc + 1] as usize];
+        let y = mem[mem[pc + 2] as usize];
+        let dest = mem[pc + 3] as usize;
         
-        let x_addr    = *mem.get(pc + 1).unwrap() as usize;
-        let y_addr    = *mem.get(pc + 2).unwrap() as usize;
-        let dest_addr = *mem.get(pc + 3).unwrap() as usize;
-        
-        let x = mem.get(x_addr).unwrap();
-        let y = mem.get(y_addr).unwrap();
-        
-        *mem.get_mut(dest_addr).unwrap() = match n {
+        mem[dest] = match mem[pc] {
             1 => x + y,
             2 => x * y,
+            99 => break,
             _ => panic!("invalid opcode"),
         };
         
         pc += 4;
     }
     
-    *mem.first().unwrap()
+    mem[0]
 }
 
 #[aoc_generator(day2, part2)]
