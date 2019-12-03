@@ -147,16 +147,14 @@ pub fn solve_part2(input: &[Vec<Line>]) -> i64 {
                     (steps2 + l2.into_inner().len.abs(), res)
                 })
                 .1
-                .iter()
-                .copied()
-                .min()
             );
-                
+            
             (steps1 + l1.into_inner().len.abs(), res)
         })
         .1
         .iter()
-        .filter_map(|x| *x)
+        .flatten()
+        .copied()
         .min()
         .unwrap()
 }
