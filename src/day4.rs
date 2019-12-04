@@ -61,10 +61,10 @@ pub fn solve_part2(input: &[u64]) -> usize {
                 .iter()
                 .fold((false, 1), |s, (curr, next)|
                     match s {
-                        (true, _) => s,
                         (false, 2) if curr != next => (true, 2),
                         (false, c) if curr == next => (false, c + 1),
-                        (false, _) => (false, 1) 
+                        (false, _) => (false, 1),
+                        _ => s
                     }
                 )
                 .1 == 2
