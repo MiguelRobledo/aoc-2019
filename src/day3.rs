@@ -74,8 +74,8 @@ impl Line {
     }
 }
 
-#[aoc_generator(day3, part1)]
-pub fn input_gen_part1(input: &str) -> Vec<Vec<Line>> {
+#[aoc_generator(day3)]
+pub fn input_gen(input: &str) -> Vec<Vec<Line>> {
     input
         .trim()
         .split("\n")
@@ -125,11 +125,6 @@ pub fn solve_part1(input: &[Vec<Line>]) -> i64 {
         .unwrap()
 }
 
-#[aoc_generator(day3, part2)]
-pub fn input_gen_part2(input: &str) -> Vec<Vec<Line>> {
-    input_gen_part1(input)
-}
-
 #[aoc(day3, part2)]
 pub fn solve_part2(input: &[Vec<Line>]) -> i64 {
     input[0]
@@ -165,31 +160,31 @@ mod tests {
     
     #[test]
     fn ex1_p1() {
-        assert_eq!(solve_part1(&input_gen_part1("R8,U5,L5,D3\nU7,R6,D4,L4")), 6);
+        assert_eq!(solve_part1(&input_gen("R8,U5,L5,D3\nU7,R6,D4,L4")), 6);
     }
     
     #[test]
     fn ex2_p1() {
-        assert_eq!(solve_part1(&input_gen_part1("R75,D30,R83,U83,L12,D49,R71,U7,L72\nU62,R66,U55,R34,D71,R55,D58,R83")), 159);
+        assert_eq!(solve_part1(&input_gen("R75,D30,R83,U83,L12,D49,R71,U7,L72\nU62,R66,U55,R34,D71,R55,D58,R83")), 159);
     }
     
     #[test]
     fn ex3_p1() {
-        assert_eq!(solve_part1(&input_gen_part1("R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51\nU98,R91,D20,R16,D67,R40,U7,R15,U6,R7")), 135);
+        assert_eq!(solve_part1(&input_gen("R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51\nU98,R91,D20,R16,D67,R40,U7,R15,U6,R7")), 135);
     }
     
     #[test]
     fn ex1_p2() {
-        assert_eq!(solve_part2(&input_gen_part2("R8,U5,L5,D3\nU7,R6,D4,L4")), 30);
+        assert_eq!(solve_part2(&input_gen("R8,U5,L5,D3\nU7,R6,D4,L4")), 30);
     }
     
     #[test]
     fn ex2_p2() {
-        assert_eq!(solve_part2(&input_gen_part2("R75,D30,R83,U83,L12,D49,R71,U7,L72\nU62,R66,U55,R34,D71,R55,D58,R83")), 610);
+        assert_eq!(solve_part2(&input_gen("R75,D30,R83,U83,L12,D49,R71,U7,L72\nU62,R66,U55,R34,D71,R55,D58,R83")), 610);
     }
     
     #[test]
     fn ex3_p2() {
-        assert_eq!(solve_part2(&input_gen_part2("R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51\nU98,R91,D20,R16,D67,R40,U7,R15,U6,R7")), 410);
+        assert_eq!(solve_part2(&input_gen("R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51\nU98,R91,D20,R16,D67,R40,U7,R15,U6,R7")), 410);
     }
 }

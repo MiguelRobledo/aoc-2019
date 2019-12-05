@@ -1,7 +1,7 @@
 use aoc_runner_derive::{aoc, aoc_generator};
 
-#[aoc_generator(day2, part1)]
-pub fn input_gen_part1(input: &str) -> Vec<u64> {
+#[aoc_generator(day2)]
+pub fn input_gen(input: &str) -> Vec<u64> {
     input
         .trim()
         .split(",")
@@ -30,11 +30,6 @@ pub fn solve_part1(input: &[u64]) -> u64 {
     }
     
     mem[0]
-}
-
-#[aoc_generator(day2, part2)]
-pub fn input_gen_part2(input: &str) -> Vec<u64> {
-    input_gen_part1(input)
 }
 
 #[aoc(day2, part2)]

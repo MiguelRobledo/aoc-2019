@@ -37,8 +37,8 @@ fn has_exact_double(v: &Vec<u8>) -> bool {
         .1 == 2
 }
 
-#[aoc_generator(day4, part1)]
-pub fn input_gen_part1(input: &str) -> Vec<u64> {
+#[aoc_generator(day4)]
+pub fn input_gen(input: &str) -> Vec<u64> {
     input
         .split("-")
         .map(|c| u64::from_str_radix(c, 10).unwrap())
@@ -48,11 +48,6 @@ pub fn input_gen_part1(input: &str) -> Vec<u64> {
 #[aoc(day4, part1)]
 pub fn solve_part1(input: &[u64]) -> usize {
     count_matches(input[0], input[1], |v| is_non_decreasing(v) && has_double(v))
-}
-
-#[aoc_generator(day4, part2)]
-pub fn input_gen_part2(input: &str) -> Vec<u64> {
-    input_gen_part1(input)
 }
 
 #[aoc(day4, part2)]
