@@ -38,7 +38,7 @@ fn count_until(target: &str, chain: &[&str]) -> u64 {
 pub fn input_gen(input: &str) -> Vec<(String, String)> {
     input
         .trim()
-        .split('\n')
+        .lines()
         .map(|l| {
             let x: Vec<&str> = l.split(')').map(|s| s.trim()).collect();
             

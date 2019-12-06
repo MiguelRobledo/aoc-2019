@@ -78,7 +78,7 @@ impl Line {
 pub fn input_gen(input: &str) -> Vec<Vec<Line>> {
     input
         .trim()
-        .split('\n')
+        .lines()
         .map(|c| c
             .trim()
             .split(',')
