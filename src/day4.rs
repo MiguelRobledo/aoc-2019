@@ -11,19 +11,19 @@ fn count_matches(min: u64, max: u64, rules: fn(&Vec<u8>) -> bool) -> usize {
         .count()
 }
 
-fn is_non_decreasing(v: &Vec<u8>) -> bool {
+fn is_non_decreasing(v: &[u8]) -> bool {
     v
         .windows(2)
         .all(|w| w[0] <= w[1])
 }
 
-fn has_double(v: &Vec<u8>) -> bool {
+fn has_double(v: &[u8]) -> bool {
     v
         .windows(2)
         .any(|w| w[0] == w[1])
 }
 
-fn has_exact_double(v: &Vec<u8>) -> bool {
+fn has_exact_double(v: &[u8]) -> bool {
     v
         .windows(2)
         .fold((false, 1), |s, w|
@@ -40,7 +40,7 @@ fn has_exact_double(v: &Vec<u8>) -> bool {
 #[aoc_generator(day4)]
 pub fn input_gen(input: &str) -> Vec<u64> {
     input
-        .split("-")
+        .split('-')
         .map(|c| u64::from_str_radix(c, 10).unwrap())
         .collect()
 }
