@@ -3,7 +3,7 @@ use aoc_runner_derive::{aoc, aoc_generator};
 fn find_children<'a>(depth: u64, parent: &str, input: &'a [(String, String)]) -> Vec<(&'a str, u64)> {
     input
         .iter()
-        .filter(|(x, _)| x == &parent)
+        .filter(|(x, _)| x == parent)
         .map(|(_, y)| (y.as_str(), depth + 1))
         .collect()
 }
@@ -11,8 +11,8 @@ fn find_children<'a>(depth: u64, parent: &str, input: &'a [(String, String)]) ->
 fn find_parent<'a>(child: &str, input: &'a [(String, String)]) -> Option<&'a str> {
     input
         .iter()
-        .find(|(_, y)| y == &child)
-        .and_then(|(x, _)| Some(x.as_ref()))
+        .find(|(_, y)| y == child)
+        .map(|(x, _)| x.as_ref())
 }
 
 fn get_chain<'a>(origin: &str, input: &'a [(String, String)]) -> Vec<&'a str> {
@@ -38,9 +38,9 @@ fn count_until(target: &str, chain: &[&str]) -> u64 {
 pub fn input_gen(input: &str) -> Vec<(String, String)> {
     input
         .trim()
-        .split("\n")
+        .split('\n')
         .map(|l| {
-            let x: Vec<&str> = l.split(")").map(|s| s.trim()).collect();
+            let x: Vec<&str> = l.split(')').map(|s| s.trim()).collect();
             
             (x[0].to_string(), x[1].to_string())
         })
@@ -52,7 +52,7 @@ pub fn solve_part1(input: &[(String, String)]) -> u64 {
     let mut candidates = find_children(0, "COM", input);
     let mut orbits = 0;
     
-    while candidates.len() != 0 {
+    while !candidates.is_empty() {
         let (c, depth) = candidates.pop().unwrap();
         
         candidates.extend(find_children(depth, c, input));
