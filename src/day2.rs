@@ -4,7 +4,7 @@ use aoc_runner_derive::{aoc, aoc_generator};
 pub fn input_gen(input: &str) -> Vec<u64> {
     input
         .trim()
-        .split(",")
+        .split(',')
         .map(|n| u64::from_str_radix(n, 10).unwrap())
         .collect()
 }
@@ -35,7 +35,7 @@ pub fn solve_part1(input: &[u64]) -> u64 {
 #[aoc(day2, part2)]
 pub fn solve_part2(input: &[u64]) -> u64 {
     let mut mem = input.to_vec();
-    let target = 19690720;
+    let target = 19_690_720;
     let max = 100;
     
     for n in 0..max {
