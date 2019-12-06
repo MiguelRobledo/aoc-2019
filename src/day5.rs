@@ -78,7 +78,7 @@ impl Intcode {
 pub fn input_gen(input: &str) -> Vec<i64> {
     input
         .trim()
-        .split(",")
+        .split(',')
         .map(|n| i64::from_str_radix(n, 10).unwrap())
         .collect()
 }
