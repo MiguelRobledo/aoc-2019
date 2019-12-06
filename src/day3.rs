@@ -23,16 +23,10 @@ pub enum Line {
 
 impl Line {
     fn new(is_horizontal: bool, x: i64, y: i64, len: i64) -> Self {
-        match is_horizontal {
-            true => Line::Horizontal(LineStruct { x, y, len }),
-            false => Line::Vertical(LineStruct { x, y, len })
-        }
-    }
-    
-    fn into_inner(&self) -> &LineStruct {
-        match self {
-            Line::Horizontal(l) => l,
-            Line::Vertical(l) => l
+        if is_horizontal {
+            Line::Horizontal(LineStruct { x, y, len })
+        } else {
+            Line::Vertical(LineStruct { x, y, len })
         }
     }
     
@@ -56,21 +50,27 @@ impl Line {
         }
     }
     
-    fn steps_to(&self, x: i64, y: i64) -> i64 {
-        let (x, y, lx, ly, len) = match self {
-            Line::Horizontal(l) => (x, y, l.x, l.y, l.len),
-            Line::Vertical(l) => (y, x, l.y, l.x, l.len)
+    fn steps_to(&self, p: Option<(i64, i64)>) -> i64 {
+        let (lx, ly, len) = match self {
+            Line::Horizontal(l) => (l.x, l.y, l.len),
+            Line::Vertical(l) => (l.y, l.x, l.len)
         };
         
-        if y == ly {
-            if is_between(x, lx, lx + len) {
+        if let Some((x, y)) = p {
+            let (x, y) = match self {
+                Line::Horizontal(_) => (x, y),
+                Line::Vertical(_) => (y, x)
+            };
+            
+            if y == ly && is_between(x, lx, lx + len) {
                 x - lx
             } else {
                 len
             }
         } else {
             len
-        }.abs()
+        }
+        .abs()
     }
 }
 
@@ -78,33 +78,35 @@ impl Line {
 pub fn input_gen(input: &str) -> Vec<Vec<Line>> {
     input
         .trim()
-        .split("\n")
-        .map(|c| {
-            c
-                .trim()
-                .split(",")
-                .fold(((0, 0), vec![]), |((x, y), mut res), s| {
-                    let mut it = s.chars();
-                    let dir = it.next().unwrap();
-                    let v = i64::from_str_radix(it.as_str(), 10).unwrap();
-                    
-                    let (is_h, v) = match dir {
-                        'U' => (false,  v),
-                        'D' => (false, -v),
-                        'L' => (true,  -v),
-                        'R' => (true,   v),
-                        _ => panic!("bad input")
-                    };
-                    
-                    res.push(Line::new(is_h, x, y, v));
-                    
-                    (if is_h {
-                        (x + v, y)
-                    } else {
-                        (x, y + v)
-                    }, res)
-                }).1
-        })
+        .split('\n')
+        .map(|c| c
+            .trim()
+            .split(',')
+            .scan((0, 0), |(x, y), s| {
+                let mut it = s.chars();
+                let dir = it.next().unwrap();
+                let v = i64::from_str_radix(it.as_str(), 10).unwrap();
+                
+                let (is_h, v) = match dir {
+                    'U' => (false,  v),
+                    'D' => (false, -v),
+                    'L' => (true,  -v),
+                    'R' => (true,   v),
+                    _ => panic!("bad input")
+                };
+                
+                let res = Line::new(is_h, *x, *y, v);
+                
+                if is_h {
+                    *x += v;
+                } else {
+                    *y += v;
+                }
+                
+                Some(res)
+            })
+            .collect()
+        )
         .collect()
 }
 
@@ -113,13 +115,14 @@ pub fn input_gen(input: &str) -> Vec<Vec<Line>> {
 pub fn solve_part1(input: &[Vec<Line>]) -> i64 {
     input[0]
         .iter()
-        .filter_map(|l1|
-            input[1]
-                .iter()
-                .filter_map(move |l2| l1.intersect(&l2))
+        .filter_map(|l1| input[1]
+            .iter()
+            .filter_map(move |l2| l1
+                .intersect(&l2)
                 .filter(|c| *c != (0, 0))
                 .map(|(x, y)| x.abs() + y.abs())
-                .min()
+            )
+            .min()
         )
         .min()
         .unwrap()
@@ -129,27 +132,27 @@ pub fn solve_part1(input: &[Vec<Line>]) -> i64 {
 pub fn solve_part2(input: &[Vec<Line>]) -> i64 {
     input[0]
         .iter()
-        .fold((0, vec![]), move |(steps1, mut res), l1| {
-            res.push(input[1]
+        .scan(0, move |steps1, l1| {
+            let res = input[1]
                 .iter()
-                .map(move |l2| (l1, l2, l1.intersect(&l2)))
-                .fold((0, vec![]), |(steps2, mut res), (l1, l2, c)| {
-                    match c {
-                        Some((x, y)) if (x, y) != (0, 0) => res.push(steps1 + steps2 + l1.steps_to(x, y) + l2.steps_to(x, y)),
-                        _ => ()
-                    }
+                .scan(0, |steps2, l2| {
+                    let cross = l1.intersect(&l2);
+                    let res = if cross.map_or(false, |v| v != (0, 0)) {
+                        Some(*steps1 + *steps2 + l1.steps_to(cross) + l2.steps_to(cross))
+                    } else { None };
                     
-                    (steps2 + l2.into_inner().len.abs(), res)
+                    *steps2 += l2.steps_to(None);
+                    
+                    Some(res)
                 })
-                .1
-            );
+                .filter_map(|x| x)
+                .min();
             
-            (steps1 + l1.into_inner().len.abs(), res)
+            *steps1 += l1.steps_to(None);
+            
+            Some(res)
         })
-        .1
-        .iter()
-        .flatten()
-        .copied()
+        .filter_map(|x| x)
         .min()
         .unwrap()
 }
