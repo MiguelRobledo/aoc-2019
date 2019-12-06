@@ -1,18 +1,5 @@
 use aoc_runner_derive::{aoc, aoc_generator};
 
-#[aoc_generator(day6)]
-pub fn input_gen(input: &str) -> Vec<(String, String)> {
-    input
-        .trim()
-        .split("\n")
-        .map(|l| {
-            let x: Vec<&str> = l.split(")").map(|s| s.trim()).collect();
-            
-            (x[0].to_string(), x[1].to_string())
-        })
-        .collect()
-}
-
 fn find_children<'a>(depth: u64, parent: &str, input: &'a [(String, String)]) -> Vec<(&'a str, u64)> {
     input
         .iter()
@@ -45,6 +32,19 @@ fn count_until(target: &str, chain: &[&str]) -> u64 {
         .iter()
         .take_while(|x| x != &&target)
         .count() as u64
+}
+
+#[aoc_generator(day6)]
+pub fn input_gen(input: &str) -> Vec<(String, String)> {
+    input
+        .trim()
+        .split("\n")
+        .map(|l| {
+            let x: Vec<&str> = l.split(")").map(|s| s.trim()).collect();
+            
+            (x[0].to_string(), x[1].to_string())
+        })
+        .collect()
 }
 
 #[aoc(day6, part1)]
