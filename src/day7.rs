@@ -2,6 +2,7 @@ use aoc_runner_derive::{aoc, aoc_generator};
 
 use crate::intcode::*;
 
+#[allow(clippy::many_single_char_names)]
 fn permute_with<F: FnMut(&[i64])>(input: &[i64], mut f: F) {
     // heap's algorithm
     let mut i = 0;
