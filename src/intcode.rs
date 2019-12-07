@@ -1,3 +1,5 @@
+use std::collections::VecDeque;
+
 pub enum Event {
     Input,
     Output(i64),
@@ -7,16 +9,16 @@ pub enum Event {
 pub struct Intcode {
     mem: Vec<i64>,
     pub pc: usize,
-    input: Vec<i64>
+    input: VecDeque<i64>
 }
 
 impl Intcode {
     pub fn new(mem: &[i64]) -> Self {
-        Intcode { mem: mem.to_vec(), pc: 0, input: vec![] }
+        Intcode { mem: mem.to_vec(), pc: 0, input: VecDeque::new() }
     }
     
     pub fn with_input(mem: &[i64], input: &[i64]) -> Self {
-        Intcode { mem: mem.to_vec(), pc: 0, input: input.iter().rev().copied().collect() }
+        Intcode { mem: mem.to_vec(), pc: 0, input: VecDeque::from(input.to_vec()) }
     }
     
     fn get_arg(&self, n: u32) -> i64 {
@@ -28,7 +30,7 @@ impl Intcode {
     }
     
     pub fn input(&mut self, input: i64) {
-        self.input.insert(0, input);
+        self.input.push_back(input);
     }
     
     pub fn get_mem(&self, n: usize) -> i64 {
@@ -59,7 +61,7 @@ impl Intcode {
                 },
                 3 | 4 => {
                     let output = match opcode {
-                        3 => if let Some(input) = self.input.pop() {
+                        3 => if let Some(input) = self.input.pop_front() {
                                 let x = self.mem[self.pc + 1] as usize;
                                 self.mem[x] = input;
                                 
