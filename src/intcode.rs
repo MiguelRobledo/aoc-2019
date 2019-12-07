@@ -1,6 +1,12 @@
+pub enum Event {
+    Input,
+    Output(i64),
+    Halt
+}
+
 pub struct Intcode {
     mem: Vec<i64>,
-    pc: usize,
+    pub pc: usize,
     input: Vec<i64>
 }
 
@@ -10,7 +16,7 @@ impl Intcode {
     }
     
     pub fn with_input(mem: &[i64], input: &[i64]) -> Self {
-        Intcode { mem: mem.to_vec(), pc: 0, input: input.to_vec() }
+        Intcode { mem: mem.to_vec(), pc: 0, input: input.iter().rev().copied().collect() }
     }
     
     fn get_arg(&self, n: u32) -> i64 {
@@ -21,14 +27,15 @@ impl Intcode {
         }
     }
     
+    pub fn input(&mut self, input: i64) {
+        self.input.insert(0, input);
+    }
+    
     pub fn get_mem(&self, n: usize) -> i64 {
         self.mem[n]
     }
     
-    pub fn run(&mut self) -> Vec<i64> {
-        let mut output = vec![];
-        let mut it = self.input.iter();
-        
+    pub fn run(&mut self) -> Event {
         loop {
             let opcode = self.mem[self.pc] % 100;
             
@@ -51,15 +58,24 @@ impl Intcode {
                     self.pc += 4;
                 },
                 3 | 4 => {
-                    let x = self.mem[self.pc + 1] as usize;
-                    
-                    match opcode {
-                        3 => self.mem[x] = *it.next().unwrap(),
-                        4 => output.push(self.mem[x]),
+                    let output = match opcode {
+                        3 => if let Some(input) = self.input.pop() {
+                                let x = self.mem[self.pc + 1] as usize;
+                                self.mem[x] = input;
+                                
+                                None
+                            } else {
+                                Some(Event::Input)
+                            },
+                        4 => Some(Event::Output(self.get_arg(1))),
                         _ => unreachable!()
-                    }
+                    };
                     
                     self.pc += 2;
+                    
+                    if let Some(o) = output {
+                        break o;
+                    }
                 },
                 5 | 6 => {
                     let (x, y) = (
@@ -74,7 +90,7 @@ impl Intcode {
                     
                     self.pc += 3;
                 },
-                99 => break output,
+                99 => break Event::Halt,
                 _ => panic!("invalid opcode {}", opcode),
             }
         }
