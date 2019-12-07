@@ -60,7 +60,7 @@ pub fn solve_part1(input: &[i64]) -> i64 {
 pub fn solve_part2(input: &[i64]) -> i64 {
     fn get_thrust(input: &[i64], setting: &[i64]) -> i64 {
         let mut signal = 0;
-        let mut amplifiers: Vec<Intcode> = (0..=setting.len()).map(|n| Intcode::with_input(input, &[setting[n]])).collect();
+        let mut amplifiers: Vec<Intcode> = (0..setting.len()).map(|n| Intcode::with_input(input, &[setting[n]])).collect();
         let mut halt = false;
         
         loop {
