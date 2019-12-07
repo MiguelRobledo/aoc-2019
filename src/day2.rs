@@ -1,39 +1,26 @@
 use aoc_runner_derive::{aoc, aoc_generator};
 
+use crate::intcode::Intcode;
+
 #[aoc_generator(day2)]
-pub fn input_gen(input: &str) -> Vec<u64> {
+pub fn input_gen(input: &str) -> Vec<i64> {
     input
         .trim()
         .split(',')
-        .map(|n| u64::from_str_radix(n, 10).unwrap())
+        .map(|n| i64::from_str_radix(n, 10).unwrap())
         .collect()
 }
 
 #[aoc(day2, part1)]
-pub fn solve_part1(input: &[u64]) -> u64 {
-    let mut mem = input.to_vec();
-    let mut pc = 0;
+pub fn solve_part1(input: &[i64]) -> i64 {
+    let mut intcode = Intcode::new(input);
+    intcode.run();
     
-    loop {
-        let x = mem[mem[pc + 1] as usize];
-        let y = mem[mem[pc + 2] as usize];
-        let dest = mem[pc + 3] as usize;
-        
-        mem[dest] = match mem[pc] {
-            1 => x + y,
-            2 => x * y,
-            99 => break,
-            _ => panic!("invalid opcode"),
-        };
-        
-        pc += 4;
-    }
-    
-    mem[0]
+    intcode.get_mem(0)
 }
 
 #[aoc(day2, part2)]
-pub fn solve_part2(input: &[u64]) -> u64 {
+pub fn solve_part2(input: &[i64]) -> i64 {
     let mut mem = input.to_vec();
     let target = 19_690_720;
     let max = 100;
