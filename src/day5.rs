@@ -16,19 +16,17 @@ pub fn solve_part1(input: &[i64]) -> i64 {
     let mut intcode = Intcode::with_input(input, &[1]);
     let mut output = 0;
     
-    loop {
-        match intcode.run() {
-            Event::Output(o) => output = o,
-            Event::Halt => break output,
-            _ => panic!()
-        }
-    }
+    intcode.execute(|o| output = o);
+    
+    output
 }
 
 #[aoc(day5, part2)]
 pub fn solve_part2(input: &[i64]) -> i64 {
-    match Intcode::with_input(input, &[5]).run() {
-        Event::Output(o) => o,
-        _ => panic!()
-    }
+    let mut intcode = Intcode::with_input(input, &[5]);
+    let mut output = 0;
+    
+    intcode.execute(|o| output = o);
+    
+    output
 }

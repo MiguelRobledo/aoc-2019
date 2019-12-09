@@ -46,7 +46,7 @@ pub fn solve_part1(input: &[i64]) -> i64 {
             .iter()
             .fold(0, |s, n| match Intcode::with_input(input, &[*n, s]).run() {
                 Event::Output(o) => o,
-                _ => panic!()
+                Event::Halt => panic!()
             })
     }
     
@@ -68,8 +68,7 @@ pub fn solve_part2(input: &[i64]) -> i64 {
                 a.input(signal);
                 match a.run() {
                     Event::Output(o) => signal = o,
-                    Event::Halt => halt = true,
-                    _ => panic!()
+                    Event::Halt => halt = true
                 }
             }
             

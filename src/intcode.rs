@@ -125,11 +125,8 @@ impl Intcode {
     }
     
     pub fn execute<F: FnMut(i64)>(&mut self, mut output_fn: F) {
-        loop {
-            match self.run() {
-                Event::Output(o) => output_fn(o),
-                Event::Halt => break
-            }
+        while let Event::Output(o) = self.run() {
+            output_fn(o);
         }
     }
 }
