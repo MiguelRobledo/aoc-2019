@@ -91,12 +91,12 @@ pub fn solve_part1(input: &[Vec<bool>]) -> usize {
 pub fn solve_part2(input: &[Vec<bool>]) -> i64 {
     let base = get_optimal_location(input).0;
     
-    let cuadrant = |(x, y): (i64, i64)|
+    let quadrant = |(x, y): (i64, i64)|
         [1, 2, 0, 3][if x < 0 { 1 } else { 0 } + if y < 0 { 2 } else { 0 }];
     
     let clockwise_cmp = |a: &(i64, i64), b: &(i64, i64)| {
-        let c_a = cuadrant(*a);
-        let c_b = cuadrant(*b);
+        let c_a = quadrant(*a);
+        let c_b = quadrant(*b);
         
         if c_a == c_b {
             if a.0 * b.1 - a.1 * b.0 < 0 {
