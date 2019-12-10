@@ -1,5 +1,7 @@
 use aoc_runner_derive::{aoc, aoc_generator};
 
+use std::cmp::Ordering;
+
 fn are_coprime(mut a: i64, mut b: i64) -> bool {
     while b != 0 {
         let tmp = b;
@@ -30,14 +32,14 @@ fn get_directions(input: &[Vec<bool>]) -> Vec<(i64, i64)> {
         .flat_map(|n| (0..n)
             .map(|m| (n, m))
             .filter(|(n, m)| are_coprime(*n, *m))
-            .collect::<Vec<(i64, i64)>>()
+            .collect::<Vec<_>>()
         )
         .chain(std::iter::once((1, 1)))
         .flat_map(|(m, n)| vec![
             (n, m), (n, -m), (-n, m), (-n, -m),
             (m, n), (m, -n), (-m, n), (-m, -n)
         ])
-        .collect::<Vec<(i64, i64)>>();
+        .collect::<Vec<_>>();
     
     v.sort();
     v.dedup();
@@ -89,20 +91,28 @@ pub fn solve_part1(input: &[Vec<bool>]) -> usize {
 pub fn solve_part2(input: &[Vec<bool>]) -> i64 {
     let base = get_optimal_location(input).0;
     
-    let mut directions = get_directions(input);
-    directions.sort_by_cached_key(|(dx, dy)| (1024. * (*dy as f64).atan2(*dx as f64)) as i64);
+    let cuadrant = |(x, y): (i64, i64)|
+        [1, 2, 0, 3][if x < 0 { 1 } else { 0 } + if y < 0 { 2 } else { 0 }];
     
-    let mut it = directions.iter().cycle().peekable();
+    let clockwise_cmp = |a: &(i64, i64), b: &(i64, i64)| {
+        let c_a = cuadrant(*a);
+        let c_b = cuadrant(*b);
+        
+        if c_a == c_b {
+            if a.0 * b.1 - a.1 * b.0 < 0 {
+                Ordering::Greater
+            } else {
+                Ordering::Less
+            }
+        } else { c_a.cmp(&c_b) }
+    };
+    
+    let mut directions = get_directions(input);
+    directions.sort_by(clockwise_cmp);
+    
+    let mut it = directions.iter().cycle();
     let mut field = input.to_vec();
     let mut vaporized = 0;
-    
-    while let Some(p) = it.peek() {
-        if **p == (0, -1) {
-            break;
-        } else {
-            it.next();
-        }
-    }
     
     loop {
         if let Some(p) = check_los(base, *it.next().unwrap(), &field) {
