@@ -22,6 +22,7 @@ impl From<&[i64]> for Memory {
 
 #[derive(Debug)]
 pub enum Event {
+    Input,
     Output(i64),
     Halt
 }
@@ -48,6 +49,10 @@ impl Intcode {
     
     pub fn get_mem(&mut self, n: usize) -> i64 {
         self.mem.get(n)
+    }
+    
+    pub fn set_mem(&mut self, n: usize, value: i64) {
+        self.mem.set(n, value);
     }
     
     fn get_mode(&mut self, n: usize) -> i64 {
@@ -99,7 +104,8 @@ impl Intcode {
                         3 => if let Some(input) = self.input.pop_front() {
                                 self.mem.set(x, input);
                             } else {
-                                panic!("unexpected end of input");
+                                self.pc -= 2;
+                                break Event::Input;
                             }
                         4 => break Event::Output(self.mem.get(x)),
                         9 => self.rel_base += self.mem.get(x) as usize,
